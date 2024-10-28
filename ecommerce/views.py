@@ -6,6 +6,8 @@ from rest_framework.decorators import api_view
 from django.http import HttpResponse, JsonResponse
 from .models import Product
 from .serializers import UserSerializer
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
 
 import json
 
@@ -46,7 +48,7 @@ def register_user_admin(request):
 
 # Usuários app
 
-@api_view(['POST'])
+@csrf_exempt
 def register_user(request):
 
     if request.method == 'POST':
@@ -56,9 +58,12 @@ def register_user(request):
         password = data.get('password')
 
         if User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'Email already registered.'}, status=400)
-    
+            return JsonResponse({'error': 'Este email já está sendo usado por outro usuário.'}, status=400)
+
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({'error': 'Este nome de usuário já está sendo usado.'}, status=400)
+        
         user = User.objects.create_user(username=username, email=email, password=password)
-        return JsonResponse({'success': 'User registered successfully'}, status=201)
+        return JsonResponse({'success': 'Usuário cadastrado com sucesso'}, status=201)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
