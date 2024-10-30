@@ -117,8 +117,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-CORS_ALLOW_ALL_ORIGINS = True  # Permite qualquer domínio (apenas para desenvolvimento)
-
+CORS_ALLOW_ALL_ORIGINS = True
 
 # MEDIA FILES
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
