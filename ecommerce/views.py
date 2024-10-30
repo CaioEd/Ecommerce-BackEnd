@@ -1,13 +1,14 @@
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
-from rest_framework import status, generics
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.http import HttpResponse, JsonResponse
+from django.http import  JsonResponse
 from .models import Product
 from .serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib import messages
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 import json
 
@@ -26,9 +27,7 @@ def home(request):
     return JsonResponse(data)
 
 
-# LISTAGEM DE PRODUTOS
-
-def list_products(request):
+def list_products(request): # LISTAGEM DE PRODUTOS
     products = Product.objects.all() # Consulta todos produtos
     products_list = list(products.values())
     return JsonResponse(products_list, safe=False)
@@ -67,3 +66,20 @@ def register_user(request):
         return JsonResponse({'success': 'Usuário cadastrado com sucesso'}, status=201)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+# Login de usuário
+@api_view(['POST'])
+def login_view(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    user = authenticate(request, username=username, password=password)
+    if user:
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'username': user.username
+        })
+    return Response({'error': 'Invalid credentials'}, status=400)
