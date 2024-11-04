@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.http import  JsonResponse
 from .models import Product
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ProductSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -31,6 +31,16 @@ def list_products(request): # LISTAGEM DE PRODUTOS
     products = Product.objects.all() # Consulta todos produtos
     products_list = list(products.values())
     return JsonResponse(products_list, safe=False)
+
+
+@api_view(['GET'])
+def product_detail(request, id):
+    try:
+        product = Product.objects.get(id=id)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+    except Product.DoesNotExist:
+        return Response('Failed')
 
 
 # ROTAS POST
