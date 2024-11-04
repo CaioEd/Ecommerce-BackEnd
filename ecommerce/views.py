@@ -82,4 +82,4 @@ def login_view(request):
             'access': str(refresh.access_token),
             'username': user.username
         })
-    return Response({'error': 'Invalid credentials'}, status=400)
+    return Response({'error': 'Dados Inválidos'}, status=400)
