@@ -1,8 +1,7 @@
 PROJECT_NAME = ecommerce-api
 
 run: 
-	python manage.py runserver
+	docker-compose up --build
 
-
-install:
-	pip install requirements.txt
+venv:
+	 .\venv\Scripts\activate

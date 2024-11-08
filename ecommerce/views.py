@@ -27,7 +27,8 @@ def home(request):
     return JsonResponse(data)
 
 
-def list_products(request): # LISTAGEM DE PRODUTOS
+# LISTAGEM DE PRODUTOS
+def list_products(request): 
     products = Product.objects.all() # Consulta todos produtos
     products_list = list(products.values())
     return JsonResponse(products_list, safe=False)
@@ -41,9 +42,16 @@ def product_detail(request, id):
         return Response(serializer.data)
     except Product.DoesNotExist:
         return Response('Failed')
+    
+
+# PESQUISA DE PRODUTOS
+def search_products(request):
+    query = request.GET.get('q')
+    if query:
+        products = Product.objects.filter(name___icontains=query)
 
 
-# ROTAS POST
+# === ROTAS POST ===
 
 # Usuários django admin
 @api_view(['POST'])
